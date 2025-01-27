@@ -65,19 +65,11 @@ DS3231::DS3231() {
 
 void DS3231::begin() {
   Wire.begin();
-}
-
-void DS3231::ReadRegister(uint8_t reg, uint8_t* dest) {
-  Wire.beginTransmission(I2C_address);
-  Wire.write(reg);
-  Wire.requestFrom(I2C_address, (uint8_t) 1);
-  *dest = Wire.read();
-  Wire.endTransmission(true);
+  ReadRegisters(0, 1+0x12, reg);
 }
 
 void DS3231::ReadRegisters(uint8_t reg, uint8_t count, uint8_t* dest) {
   Wire.beginTransmission(I2C_address);
-  Wire.write(reg);
   Wire.requestFrom(I2C_address, count);
   for(int i=0; i<count; i++)
      dest[i] = Wire.read();
@@ -92,7 +84,7 @@ void DS3231::WriteRegister(uint8_t reg, uint8_t val) {
 }
 
 void DS3231::GetTime(struct Time* tm) {
-  ReadRegisters(0, 7, reg);
+  ReadRegisters(0, 1+0x12, reg);
   tm->Seconds = BCD2Decimal(reg[0x00] & 0x7F);
   tm->Minutes = BCD2Decimal(reg[0x01] & 0x7F);
   bool AM_PM = (reg[0x02] & 0x40) > 0;
@@ -198,13 +190,61 @@ void DS3231::ParseDateTime(struct Time* tm, char* datetime) {
   tm->Seconds = TwoCharsToByte(datetime);                 // 00–59
 }
 
-void DS3231::EnableOscillator(bool On) {
-  ReadRegister(0x0E, &reg[0x0E]);
+void DS3231::SetControl(uint8_t flag, bool On) {
+  ReadRegisters(0, 1+0x12, reg);
   if (On)
-     reg[0x0E] &= 0x7F;
+     reg[0x0E] |= flag;
   else
-     reg[0x0E] |= 0x80;
-  WriteRegister(0x0E, reg[0x0E]);     
+     reg[0x0E] &= ~flag;
+  WriteRegister(0x0E, reg[0x0E]);
+}
+
+void DS3231::EnableOscillatorOnBattery(bool On) {
+  SetControl(0x80, not On); // inverted
+}
+
+void DS3231::EnableSquareWaveOnBattery(bool On) {
+  SetControl(0x40, On);
+}
+
+void DS3231::SquareWaveRate(uint8_t Rate) {
+  if (Rate > 3)
+     return;
+  ReadRegisters(0, 1+0x12, reg);
+  reg[0x0E] &= ~0x18;
+  reg[0x0E] |= (Rate << 3);
+  WriteRegister(0x0E, reg[0x0E]);
+}
+ 
+void DS3231::Pin3SquareWave(bool On) {
+  SetControl(0x04, On);
+}
+
+void DS3231::EnableAlarm1(bool On) {
+  SetControl(0x01, On);
+}
+
+void DS3231::EnableAlarm2(bool On) {
+  SetControl(0x02, On);
+}
+
+void DS3231::Enable32kHzOutput(bool On) {
+  ReadRegisters(0, 1+0x12, reg);
+  if (On)
+     reg[0x0F] |= 0x08;
+  else
+     reg[0x0F] &= ~0x08;
+  WriteRegister(0x0F, reg[0x0F]);
+}
+
+void DS3231::SetAgingOffset(int8_t value) {
+  WriteRegister(0x10, value);
+}
+
+double DS3231::Temperature(void) {
+  ReadRegisters(0, 1+0x12, reg);
+  int16_t i = ((uint16_t)reg[0x11] << 8) | reg[0x12];
+  return i / 256.0; // shift 6 digits right and scale by 0.25
 }
 
 int BCD2Decimal(uint8_t bcd) {
