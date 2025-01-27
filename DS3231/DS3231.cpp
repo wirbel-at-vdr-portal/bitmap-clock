@@ -166,11 +166,26 @@ void DS3231::PrintTime(struct Time* tm, char* buf) {
 void DS3231::ParseDateTime(struct Time* tm, char* datetime) {
   // check string to be 'dd.mm.yyyy HH:MM:SS'
   for(int i=0; i<19; i++) if (datetime[i] == 0) return;
-  if (datetime[19] != 0) return;
-  if (datetime[ 2] != '.') return;
-  if (datetime[ 5] != '.') return;
-  if (datetime[13] != ':') return;
-  if (datetime[16] != ':') return;
+  if (datetime[19] != 0) {
+     Serial.println("null termination check failed.");
+     return;
+     }
+  if (datetime[ 2] != '.') {
+     Serial.println("first date dot missing");
+     return;
+     }
+  if (datetime[ 5] != '.') {
+     Serial.println("second date dot missing");
+     return;
+     }
+  if (datetime[13] != ':') {
+     Serial.println("first time colon missing");
+     return;
+     }
+  if (datetime[16] != ':') {
+     Serial.println("second time colon missing");
+     return;
+     }
 
   tm->Date    = TwoCharsToByte(datetime); datetime += 3;  // 01–31
   tm->Month   = TwoCharsToByte(datetime); datetime += 3;  // 01-12

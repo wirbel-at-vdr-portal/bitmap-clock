@@ -13,7 +13,7 @@ void loop() {
   uint8_t buf[20];
 
   // set date to 'dd.mm.yyyy HH:MM:SS'
-  if (Serial.available() == 20) {
+  if (Serial.available() >= 20) {
      char c[22];
      String newdate = Serial.readString();
      newdate.trim();
