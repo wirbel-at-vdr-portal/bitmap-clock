@@ -198,6 +198,15 @@ void DS3231::ParseDateTime(struct Time* tm, char* datetime) {
   tm->Seconds = TwoCharsToByte(datetime);                 // 00–59
 }
 
+void DS3231::EnableOscillator(bool On) {
+  ReadRegister(0x0E, &reg[0x0E]);
+  if (On)
+     reg[0x0E] &= 0x7F;
+  else
+     reg[0x0E] |= 0x80;
+  WriteRegister(0x0E, reg[0x0E]);     
+}
+
 int BCD2Decimal(uint8_t bcd) {
   return (bcd & 0xF) + 10 * (bcd >> 4);
 }

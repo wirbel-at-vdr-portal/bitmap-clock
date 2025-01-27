@@ -23,6 +23,11 @@ public:
   void GetTime(struct Time* tm);
   void SetTime(struct Time* tm);
 
+  /* When true, the oscillator is started. When set to false,
+   * the oscillator is stopped when the DS3231 switches to VBAT
+   */
+  void EnableOscillator(bool On);
+
   /* Prints date and time into a char buffer, ie '26.01.2025 10:56:04'
    * buf - pointer to an char[20] (at least)
    */
