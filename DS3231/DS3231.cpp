@@ -115,6 +115,13 @@ void DS3231::SetTime(struct Time* tm) {
   if (tm->Year >= 2000) reg05 |= 0x80;               // Century flag
   WriteRegister(0x05, reg05);                        // 01–12 + Century
   WriteRegister(0x06, DecimalToBCD(tm->Year % 100)); // 00–99
+  ReadRegisters(0, 1+0x12, reg);
+  WriteRegister(0x0F, reg[0x0F] & 0x7F);
+}
+
+bool DS3231::TimeIsValid(void) {
+  ReadRegisters(0, 1+0x12, reg);
+  return (reg[0x0F] & 0x80) == 0;
 }
 
 void DS3231::PrintDateTime(struct Time* tm, char* buf) {

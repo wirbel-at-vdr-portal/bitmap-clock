@@ -69,6 +69,13 @@ public:
    */
   double Temperature(void);
 
+  /* Returns false, if the oscillator either is stopped or was stopped
+   * for some period and may be used to judge the validity of the
+   * timekeeping data.
+   * The result remains false until SetTime() is called.
+   */
+  bool TimeIsValid(void);
+
   /* Prints date and time into a char buffer, ie '26.01.2025 10:56:04'
    * buf - pointer to an char[20] (at least)
    */

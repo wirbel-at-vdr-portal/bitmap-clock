@@ -19,6 +19,7 @@ void setup() {
   Serial.print("Alarm 1 Interrupt Enable:          "), Serial.println((buf[0xE] & 0x01) > 0);
   Serial.print("Enable 32kHz Output:               "), Serial.println((buf[0xF] & 0x08) > 0);
   Serial.print("Aging Offset:                      "), Serial.println((int) buf[0x10]);
+  Serial.print("Time is valid:                     "), Serial.println(rtc.TimeIsValid()?"true":"false");
 }
 
 void loop() {
