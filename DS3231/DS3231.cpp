@@ -71,6 +71,7 @@ void DS3231::begin() {
 void DS3231::ReadRegisters(uint8_t reg, uint8_t count, uint8_t* dest) {
   Wire.beginTransmission(I2C_address);
   Wire.requestFrom(I2C_address, count);
+  Wire.write(reg);
   for(int i=0; i<count; i++)
      dest[i] = Wire.read();
   Wire.endTransmission(true);
@@ -106,6 +107,8 @@ void DS3231::GetTime(struct Time* tm) {
 }
 
 void DS3231::SetTime(struct Time* tm) {
+  ReadRegisters(0, 1+0x12, reg);
+  WriteRegister(0x0F, reg[0x0F] & 0x7F);
   WriteRegister(0x00, DecimalToBCD(tm->Seconds));    // 00–59
   WriteRegister(0x01, DecimalToBCD(tm->Minutes));    // 00–59
   WriteRegister(0x02, DecimalToBCD(tm->Hours));      // 00–23
@@ -115,8 +118,6 @@ void DS3231::SetTime(struct Time* tm) {
   if (tm->Year >= 2000) reg05 |= 0x80;               // Century flag
   WriteRegister(0x05, reg05);                        // 01–12 + Century
   WriteRegister(0x06, DecimalToBCD(tm->Year % 100)); // 00–99
-  ReadRegisters(0, 1+0x12, reg);
-  WriteRegister(0x0F, reg[0x0F] & 0x7F);
 }
 
 bool DS3231::TimeIsValid(void) {
@@ -246,6 +247,16 @@ void DS3231::Enable32kHzOutput(bool On) {
 
 void DS3231::SetAgingOffset(int8_t value) {
   WriteRegister(0x10, value);
+  bool busy;
+  do {
+     ReadRegisters(0, 1+0x12, reg);
+     busy = (reg[0x0F] & 0x04) > 0;
+     if (busy) {
+        Serial.println("waiting - device is busy executing TCXO functions.");
+        delay(100);
+        }
+     } while(busy);
+  WriteRegister(0x0E, reg[0x0E] | 0x20);
 }
 
 double DS3231::Temperature(void) {

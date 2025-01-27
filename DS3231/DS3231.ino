@@ -8,6 +8,7 @@ void setup() {
   Serial.begin(115200);
   rtc.begin();
   //rtc.Enable32kHzOutput(false);
+  //rtc.SetAgingOffset(-12);
   rtc.ReadRegisters(0, 1+0x12, buf);
   Serial.print("Enable Oscillator on Battery:      "), Serial.println((buf[0xE] & 0x80) > 0?"false":"true");
   Serial.print("Battery-Backed Square-Wave Enable: "), Serial.println((buf[0xE] & 0x40) > 0?"true":"false");
@@ -18,7 +19,7 @@ void setup() {
   Serial.print("Alarm 2 Interrupt Enable:          "), Serial.println((buf[0xE] & 0x02) > 0);
   Serial.print("Alarm 1 Interrupt Enable:          "), Serial.println((buf[0xE] & 0x01) > 0);
   Serial.print("Enable 32kHz Output:               "), Serial.println((buf[0xF] & 0x08) > 0);
-  Serial.print("Aging Offset:                      "), Serial.println((int) buf[0x10]);
+  Serial.print("Aging Offset:                      "), Serial.println((int8_t) buf[0x10]);
   Serial.print("Time is valid:                     "), Serial.println(rtc.TimeIsValid()?"true":"false");
 }
 
