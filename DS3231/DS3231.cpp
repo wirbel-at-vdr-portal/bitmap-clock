@@ -259,10 +259,14 @@ void DS3231::SetAgingOffset(int8_t value) {
   WriteRegister(0x0E, reg[0x0E] | 0x20);
 }
 
-double DS3231::Temperature(void) {
+float DS3231::Temperature(void) {
   ReadRegisters(0, 1+0x12, reg);
-  int16_t i = ((uint16_t)reg[0x11] << 8) | reg[0x12];
-  return i / 256.0; // shift 6 digits right and scale by 0.25
+
+reg[0x11] = 0xE6;
+reg[0x12] = 0x20;
+  float f = (int8_t) reg[0x11];
+  f += reg[0x12] / 64.0f; // +0.125 -> 32d -> 0x21
+  return f;
 }
 
 int BCD2Decimal(uint8_t bcd) {

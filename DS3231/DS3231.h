@@ -67,7 +67,7 @@ public:
 
   /* Measured temperature with a resolution of 0.25°C
    */
-  double Temperature(void);
+  float Temperature(void);
 
   /* Returns false, if the oscillator either is stopped or was stopped
    * for some period and may be used to judge the validity of the
