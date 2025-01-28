@@ -9,6 +9,7 @@ Components, which may change:
 * Arduino Nano ESP32 (Nora)
 * RTC DS3231SN
 * 8x 1.69" 280x240 ST7789 IPS LCD
+* PCF8574 for driving eight chip select pins
 * (what else..?)
 
 ![Ziffer 9](doc/Ziffer.jpg)
