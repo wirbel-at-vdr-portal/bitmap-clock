@@ -1,6 +1,13 @@
-/* NumberDisplay is an Adafruit_GFX derived class for
+/*******************************************************************************
+ * This file is part of bitmap-clock.
+ * https://github.com/wirbel-at-vdr-portal/bitmap-clock
+ * See the README file for copyright information and how to reach the author.
+ ******************************************************************************/
+
+/*******************************************************************************
+ * NumberDisplay is an Adafruit_GFX derived class for
  * displaying numbers on a 1.69" 280x240 ST7789 IPS LCD
- */
+ ******************************************************************************/
 
 #include <Adafruit_ST77xx.h>
 
