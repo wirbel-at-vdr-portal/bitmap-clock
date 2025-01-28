@@ -261,11 +261,8 @@ void DS3231::SetAgingOffset(int8_t value) {
 
 float DS3231::Temperature(void) {
   ReadRegisters(0, 1+0x12, reg);
-
-reg[0x11] = 0xE6;
-reg[0x12] = 0x20;
   float f = (int8_t) reg[0x11];
-  f += reg[0x12] / 64.0f; // +0.125 -> 32d -> 0x21
+  f += (reg[0x12] >> 6) / 4.0f;
   return f;
 }
 

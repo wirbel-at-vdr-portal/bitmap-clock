@@ -8,7 +8,7 @@ void setup() {
   Serial.begin(115200);
   rtc.begin();
   //rtc.Enable32kHzOutput(false);
-  //rtc.SetAgingOffset(-12);
+  //rtc.SetAgingOffset(0);
   rtc.ReadRegisters(0, 1+0x12, buf);
   Serial.print("Enable Oscillator on Battery:      "), Serial.println((buf[0xE] & 0x80) > 0?"false":"true");
   Serial.print("Battery-Backed Square-Wave Enable: "), Serial.println((buf[0xE] & 0x40) > 0?"true":"false");
