@@ -6,10 +6,11 @@ Not yet shure if that idea may work at all..
 I'm just collecting pieces yet.
 
 Components, which may change:
-* Arduino Nano ESP32 (Nora)
+* Arduino Nano ESP32 (Nora), it features a 16 MByte external flash via QSPI, running at up to 83 Mbyte/s.
 * RTC DS3231SN
 * 8x 1.69" 280x240 ST7789 IPS LCD
 * PCF8574 for driving eight chip select pins
+* Implementing or Re-Implementing lib NTPClient? Depends on avail power/space.
 * (what else..?)
 
 ![Ziffer 9](doc/Ziffer.jpg)
