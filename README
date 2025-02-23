@@ -1,4 +1,4 @@
-The idea of an 6-digit Nixie-like clock, using eight 1.69" 280x240 ST7789 IPS LCDs.
+The idea of an 6-digit (actually eight: six numbers plus two digits showing a blinking separator) Nixie-like clock, using eight 1.69" 280x240 ST7789 IPS LCDs.
 
 It should display the time as hh:mm:ss (eight displays)
 
@@ -36,3 +36,14 @@ Measured current consumption:
 Display update Time:
 * to update all eight digits, we need ~ 0.5sec
 * i can save time, if updating only digits, which actually changed their value.
+
+
+
+== Current Status ==
+* 20250223
+** prototype pcb assembled.
+** prototype board needs changes, eight pullup resistors are missing. For first tests, i added those to the display pcbs.
+** otherwise, display speed is sufficient
+** SPI runs stable at least at 32MHz
+** 4 spare pcb's plus parts to play with.
+** first successful firmware.
