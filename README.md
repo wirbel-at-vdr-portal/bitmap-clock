@@ -19,6 +19,7 @@ I'm just collecting pieces yet.
 
 ![overview](doc/overview_small.bmp)
 
+
 ## Current Status
 * design prototype PCB -> done
 * produce and assemble prototype -> done
@@ -28,6 +29,8 @@ I'm just collecting pieces yet.
 * check multiplexing -> done. Found one missing pullup resistor per digit; fixed
 * check SPI speed -> done. No problem at all, the default of 32MHz runs nice. Setting it SPI clk to 80MHz doesn't change anything - to be measured.
 * 20250223: first successful firmware. IPS displays are actually GREAT in terms of display angle.
+
+![Prototype](doc/Prototype.jpg)
 
 ## Measured current consumption
 * 5V @ 280mA
