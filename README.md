@@ -30,7 +30,7 @@ I'm just collecting pieces yet.
 * check SPI speed -> done. No problem at all, the default of 32MHz runs nice. Setting it SPI clk to 80MHz doesn't change anything - to be measured.
 * 20250223: first successful firmware. IPS displays are actually GREAT in terms of display angle.
 
-![Prototype](doc/Prototype.jpg)
+![Prototype](doc/Prototype.png)
 
 ## Measured current consumption
 * 5V @ 280mA
