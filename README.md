@@ -23,12 +23,14 @@ I'm just collecting pieces yet.
 ## Current Status
 * design prototype PCB -> done
 * produce and assemble prototype -> done
-* driving all digits requires takes less than 60% of the avail memory. -> plenty of space left for fun things
+* driving all digits requires takes ~ 60% of the avail memory. -> plenty of space left for fun things
 * The IPS displays and the RTC should use tiny(!) libs. -> done
 * Speed up TFTs as much as possible -> done
-* check multiplexing -> done. Found one missing pullup resistor per digit; fixed
+* check multiplexing -> done. Found one missing 1k pullup resistor per digit; fixed for prototype
+* check I2C -> done. Found two missing 4.7k pullup resistors for SDA & SCK; fixed for prototype
 * check SPI speed -> done. No problem at all, the default of 32MHz runs nice. Setting it SPI clk to 80MHz doesn't change anything - to be measured.
 * 20250223: first successful firmware. IPS displays are actually GREAT in terms of display angle.
+* 20250225: RTC works. Showing actual time now on display.
 
 ![Prototype](doc/Prototype.png)
 
@@ -39,5 +41,5 @@ I'm just collecting pieces yet.
 
 ## Display update Time:
 * to update all eight digits, we need ~ 0.5sec
-* i can save time, if updating only digits, which actually changed their value.
+* i can save time, if updating only digits, which actually changed their value -> done
 
