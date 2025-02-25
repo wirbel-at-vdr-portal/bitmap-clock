@@ -22,6 +22,7 @@
 #include "bitmaps/Ziffer_8.h"
 #include "bitmaps/Ziffer_9.h"
 #include "bitmaps/DP.h"
+#include "bitmaps/DP_off.h"
 
 NumberDisplay::NumberDisplay(int8_t ChipSelects[], uint8_t Digits, int8_t cs, int8_t dc, int8_t rst) :
   Adafruit_ST77xx(240, 280, cs, dc, rst), Multiplexer(ChipSelects, Digits), values({~0}) {}
@@ -194,7 +195,7 @@ void NumberDisplay::DrawNumber(int n) {
         drawRGBBitmap(0,0, (uint16_t*) Ziffer_9, 240,280, true, false);
         break;
      default:
-        fillScreen(ST77XX_BLACK);
+        drawRGBBitmap(0,0, (uint16_t*) DP_off, 240,280, true, false);
      }
 }
 

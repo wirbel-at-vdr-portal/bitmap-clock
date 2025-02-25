@@ -5,8 +5,8 @@
  ******************************************************************************/
 
 #include "DS3231.h"
-#include <Wire.h>
 #include <Arduino.h>
+#include <Wire.h>
 
 /*
  *--------------------------------------------------------------------------------------------------------------
@@ -71,17 +71,26 @@ DS3231::DS3231() {
 }
 
 void DS3231::begin() {
-  Wire.begin();
+  //Wire.begin();
   ReadRegisters(0, 1+0x12, reg);
 }
 
 void DS3231::ReadRegisters(uint8_t reg, uint8_t count, uint8_t* dest) {
+/*
   Wire.beginTransmission(I2C_address);
   Wire.requestFrom(I2C_address, count);
   Wire.write(reg);
   for(int i=0; i<count; i++)
      dest[i] = Wire.read();
   Wire.endTransmission(true);
+*/
+  Wire.beginTransmission(I2C_address);
+  Wire.write(reg);
+  Wire.endTransmission();
+
+  Wire.requestFrom(I2C_address, count);
+  for(int i=0; Wire.available(); i++)
+     dest[i] = Wire.read();
 }
 
 void DS3231::WriteRegister(uint8_t reg, uint8_t val) {

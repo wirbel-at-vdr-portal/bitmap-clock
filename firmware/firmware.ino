@@ -1,4 +1,4 @@
-
+#include <Wire.h>
 #include "NumberDisplay.h"
 #include "DS3231.h"
 
@@ -23,8 +23,9 @@ auto rtc = DS3231();
 DS3231::Time tm;
 
 void setup(void) {
+  Wire.begin();
   Serial.begin(115200);
-  delay(6000);
+  while(!Serial)delay(100);
   Serial.println("begin..");
   //tft.setSPISpeed(80000000); // 40 MHz
   tft.init(240, 280, SPI_MODE0, true);
@@ -48,20 +49,20 @@ void loop(void) {
 
 
 
-  int8_t colon = -1 + (tm.Seconds & 1) * 10;
+  int8_t colon = -1 + (tm.Seconds & 1) * 11;
 
-  tft.DrawNumber(tm.Seconds % 10, 1); tm.Seconds /= 10;
-  tft.DrawNumber(tm.Seconds % 10, 0);
+  tft.DrawNumber(tm.Seconds % 10, 7); tm.Seconds /= 10;
+  tft.DrawNumber(tm.Seconds % 10, 6);
 
-  tft.DrawNumber(colon, 2);
+  tft.DrawNumber(colon, 5);
 
   tft.DrawNumber(tm.Minutes % 10, 4); tm.Minutes /= 10;
   tft.DrawNumber(tm.Minutes % 10, 3);
 
-  tft.DrawNumber(colon, 5);
+  tft.DrawNumber(colon, 2);
 
-  tft.DrawNumber(tm.Hours % 10, 4); tm.Hours /= 10;
-  tft.DrawNumber(tm.Hours % 10, 3);
+  tft.DrawNumber(tm.Hours % 10, 1); tm.Hours /= 10;
+  tft.DrawNumber(tm.Hours % 10, 0);
 
   /*struct Time {
      uint8_t Seconds; // 00–59
