@@ -12,13 +12,19 @@ I'm just collecting pieces yet.
 * 8x 1.69" 280x240 ST7789 IPS LCD
 * 4x 74LVT244A + 8x 1k pullup resistors for driving eight chip select pins
 * REG1117 3.3V
-* Implementing or Re-Implementing lib NTPClient? Depends on avail power/space.
-* (what else..?)
+* Implementing or Re-Implementing lib NTPClient? -> YES.
+
 
 ![Ziffer 9](doc/Ziffer.jpg)
 
 ![overview](doc/overview_small.bmp)
 
+# Wanted features
+* Nixie feeling
+* No trouble after power cut, just continue working
+* RTC running at UTC
+* NTP via WiFi, keeping the RTC up to date
+* Powered via USB-C
 
 ## Current Status
 * design prototype PCB -> done
@@ -31,6 +37,7 @@ I'm just collecting pieces yet.
 * check SPI speed -> done. No problem at all, the default of 32MHz runs nice. Setting it SPI clk to 80MHz doesn't change anything - to be measured.
 * 20250223: first successful firmware. IPS displays are actually GREAT in terms of display angle.
 * 20250225: RTC works. Showing actual time now on display.
+* 20250226: NTP via wifi works nice. About 22% available memory for a demo sketch; but dealing with WiFi interruptions to be integrated.
 
 ![Prototype](doc/Prototype.png)
 
