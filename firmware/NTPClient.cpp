@@ -18,6 +18,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+/* 02/2025 -wk: This file was edited and reduced to bare minimum */
+
 #include "NTPClient.h"
 
 NTPClient::NTPClient(UDP& UDP_Class) : initialized(false),

@@ -18,6 +18,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+/* 02/2025 -wk: This file was edited and reduced to bare minimum */
+
 #pragma once
 #include <Arduino.h>
 #include <Udp.h>
