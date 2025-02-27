@@ -25,44 +25,35 @@ DS3231::Time tm;
 void setup(void) {
   Wire.begin();
   Serial.begin(115200);
-  while(!Serial)delay(100);
-  Serial.println("begin..");
+  //while(!Serial)delay(100);
+  //Serial.println("begin..");
   //tft.setSPISpeed(80000000); // 40 MHz
   tft.init(240, 280, SPI_MODE0, true);
-  Serial.println("vor rtc.begin..");
+  //Serial.println("vor rtc.begin..");
   rtc.begin();
-  Serial.println("initialized..");
+  //Serial.println("initialized..");
 }
 
-//uint32_t i=0;
+uint32_t i=0;
 uint8_t Seconds { 100 };
 
 void loop(void) {
-//  uint32_t n = i++;
-  Serial.println(" ..");
+
   rtc.GetTime(&tm);
-//  if (tm.Seconds == Seconds)
-//     return;
-
-  char datestr[20];
-  rtc.PrintDateTime(&tm, datestr); Serial.println(datestr);
-
-
+  if (tm.Seconds == Seconds)
+     return;
 
   int8_t colon = -1 + (tm.Seconds & 1) * 11;
-
+  tft.DrawNumber(colon, 5);
+  tft.DrawNumber(colon, 2);
+  
   tft.DrawNumber(tm.Seconds % 10, 7); tm.Seconds /= 10;
   tft.DrawNumber(tm.Seconds % 10, 6);
-
-  tft.DrawNumber(colon, 5);
-
   tft.DrawNumber(tm.Minutes % 10, 4); tm.Minutes /= 10;
   tft.DrawNumber(tm.Minutes % 10, 3);
-
-  tft.DrawNumber(colon, 2);
-
   tft.DrawNumber(tm.Hours % 10, 1); tm.Hours /= 10;
   tft.DrawNumber(tm.Hours % 10, 0);
+  delay(50);
 
   /*struct Time {
      uint8_t Seconds; // 00–59
@@ -73,14 +64,15 @@ void loop(void) {
      uint8_t Month;   // 01-12
      uint16_t Year;   // 20xx
      };
-
+/*
+  uint32_t n = i++;
   tft.DrawNumber(n % 10, 7); n /= 10;
   tft.DrawNumber(n % 10, 6); n /= 10;
   tft.DrawNumber(n % 10, 5); n /= 10;
   tft.DrawNumber(n % 10, 4); n /= 10;
+  tft.DrawNumber(n % 10, 3); n /= 10;
+  tft.DrawNumber(n % 10, 2); n /= 10;
+  tft.DrawNumber(n % 10, 1); n /= 10;
+  tft.DrawNumber(n % 10, 0); n /= 10;
 */
-
-  delay(50);
-
 }
-
