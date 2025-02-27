@@ -5,8 +5,21 @@
  ******************************************************************************/
 
 #include <Wire.h>
+#include <WiFi.h>
+#include <WiFiUdp.h>
+#include <TimeLib.h> // https://github.com/PaulStoffregen/Time
 #include "NumberDisplay.h"
 #include "DS3231.h"
+#include "NTPClient.h"
+#include "SummerTime.h"
+#include "credentials.h"
+
+/*******************************************************************************
+ * forward decls
+ ******************************************************************************/
+void StartWifi();
+void StopWifi();
+
 
 /***************************************************************
  *      TFT        |  Nano
@@ -27,28 +40,85 @@ NumberDisplay tft = NumberDisplay(CS_pins, sizeof(CS_pins)/sizeof(CS_pins[0]),
 
 auto rtc = DS3231();
 DS3231::Time tm;
+WiFiUDP udp;
+NTPClient Ntp(udp);
+uint8_t Seconds = 100;
+uint32_t updateCount = 0;
+int WifiRetries = 0;
+int timeZone = +1; // CET or UTC+1
+
 
 void setup(void) {
   Wire.begin();
   Serial.begin(115200);
-  //while(!Serial)delay(100);
-  //Serial.println("begin..");
-  //tft.setSPISpeed(80000000); // 40 MHz
   tft.init(240, 280, SPI_MODE0, true);
-  //Serial.println("vor rtc.begin..");
   rtc.begin();
-  //Serial.println("initialized..");
+  StartWifi();
 }
 
-uint32_t i=0;
-uint8_t Seconds { 100 };
 
 void loop(void) {
-
   rtc.GetTime(&tm);
   if (tm.Seconds == Seconds) {
      delay(10);
      return;
+     }
+  Seconds = tm.Seconds;
+
+  if (++updateCount >= 1 * 60) {
+     updateCount = 0;
+     Serial.println("Getting NTP time..");
+     if (Ntp.update()) {
+        Serial.println("NTP success.");        
+        WifiRetries = 0;
+
+        time_t t = Ntp.getEpochTime();
+        t += timeZone * 3600;
+
+        int hours   = hour(t);
+        int days    = day(t);
+        int months  = month(t);
+        int years   = year(t);
+        int minutes;
+        int seconds;
+
+        if (IsEuropeSummerTime(years, months, days, hours)) {
+           // time is moved one hour forward in local time
+           t += 3600;
+           hours   = hour(t);
+           days    = day(t);
+           months  = month(t);
+           years   = year(t);
+           }
+
+        minutes = minute(t);
+        seconds = second(t);
+
+        rtc.GetTime(&tm);
+        if (tm.Seconds != seconds or // 00–59
+            tm.Minutes != minutes or // 00–59
+            tm.Hours   != hours   or // 00–23
+            tm.Date    != days    or // 01–31
+            tm.Month   != months  or // 01-12
+            tm.Year    != years) {   // 20xx 
+           Serial.println("correcting local RTC");
+           tm.Seconds = seconds;
+           tm.Minutes = minutes;
+           tm.Hours   = hours;
+           tm.Date    = days;
+           tm.Month   = months;
+           tm.Year    = years;
+           rtc.SetTime(&tm);
+           }
+        }
+     else if (WiFi.status() != WL_CONNECTED and WifiRetries < 10) {
+        Serial.println("reconnecting WiFi..");
+        WifiRetries++;
+        StopWifi();
+        delay(1000);
+        StartWifi();
+        delay(1000);
+        }
      }
 
   int8_t colon = -1 + (tm.Seconds & 1) * 11;
@@ -59,28 +129,22 @@ void loop(void) {
   tft.DrawNumber(tm.Seconds % 10, 6);
   tft.DrawNumber(tm.Minutes % 10, 4); tm.Minutes /= 10;
   tft.DrawNumber(tm.Minutes % 10, 3);
-  tft.DrawNumber(tm.Hours % 10, 1); tm.Hours /= 10;
-  tft.DrawNumber(tm.Hours % 10, 0);
-
-
-  /*struct Time {
-     uint8_t Seconds; // 00–59
-     uint8_t Minutes; // 00–59
-     uint8_t Hours;   // 00–23
-     uint8_t Days;    // 1–7
-     uint8_t Date;    // 01–31
-     uint8_t Month;   // 01-12
-     uint16_t Year;   // 20xx
-     };
-/*
-  uint32_t n = i++;
-  tft.DrawNumber(n % 10, 7); n /= 10;
-  tft.DrawNumber(n % 10, 6); n /= 10;
-  tft.DrawNumber(n % 10, 5); n /= 10;
-  tft.DrawNumber(n % 10, 4); n /= 10;
-  tft.DrawNumber(n % 10, 3); n /= 10;
-  tft.DrawNumber(n % 10, 2); n /= 10;
-  tft.DrawNumber(n % 10, 1); n /= 10;
-  tft.DrawNumber(n % 10, 0); n /= 10;
-*/
+  tft.DrawNumber(tm.Hours   % 10, 1); tm.Hours /= 10;
+  tft.DrawNumber(tm.Hours   % 10, 0);
 }
+
+
+void StartWifi() {
+  WiFi.begin(ssid, password);
+  // wait up to 15 secs for connect.
+  for(int i=0; (WiFi.status() != WL_CONNECTED) and (i<150); i++)
+     delay(100);
+  if (WiFi.status() == WL_CONNECTED)
+     Ntp.begin();
+}
+
+void StopWifi() {
+  Ntp.end();
+  WiFi.disconnect();
+} 
+
