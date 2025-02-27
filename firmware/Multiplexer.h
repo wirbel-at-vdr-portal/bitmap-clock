@@ -1,5 +1,9 @@
+/*******************************************************************************
+ * This file is part of bitmap-clock.
+ * https://github.com/wirbel-at-vdr-portal/bitmap-clock
+ * See the README file for copyright information and how to reach the author.
+ ******************************************************************************/
 #pragma once
-
 #include <cstdint>
 
 /* This class maintains the information, which digit of our display

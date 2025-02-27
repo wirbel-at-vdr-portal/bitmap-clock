@@ -1,3 +1,9 @@
+/*******************************************************************************
+ * This file is part of bitmap-clock.
+ * https://github.com/wirbel-at-vdr-portal/bitmap-clock
+ * See the README file for copyright information and how to reach the author.
+ ******************************************************************************/
+
 #include <Wire.h>
 #include "NumberDisplay.h"
 #include "DS3231.h"

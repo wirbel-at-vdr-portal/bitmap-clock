@@ -1,6 +1,10 @@
+/*******************************************************************************
+ * This file is part of bitmap-clock.
+ * https://github.com/wirbel-at-vdr-portal/bitmap-clock
+ * See the README file for copyright information and how to reach the author.
+ ******************************************************************************/
 #include "Multiplexer.h"
 #include <Arduino.h>
-
 
 Multiplexer::Multiplexer(int8_t* Pins, uint8_t Count) :
   pins(Pins), count(Count), selected(~0) {
