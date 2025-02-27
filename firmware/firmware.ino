@@ -40,20 +40,22 @@ uint8_t Seconds { 100 };
 void loop(void) {
 
   rtc.GetTime(&tm);
-  if (tm.Seconds == Seconds)
+  if (tm.Seconds == Seconds) {
+     delay(10);
      return;
+     }
 
   int8_t colon = -1 + (tm.Seconds & 1) * 11;
   tft.DrawNumber(colon, 5);
   tft.DrawNumber(colon, 2);
-  
+
   tft.DrawNumber(tm.Seconds % 10, 7); tm.Seconds /= 10;
   tft.DrawNumber(tm.Seconds % 10, 6);
   tft.DrawNumber(tm.Minutes % 10, 4); tm.Minutes /= 10;
   tft.DrawNumber(tm.Minutes % 10, 3);
   tft.DrawNumber(tm.Hours % 10, 1); tm.Hours /= 10;
   tft.DrawNumber(tm.Hours % 10, 0);
-  delay(50);
+
 
   /*struct Time {
      uint8_t Seconds; // 00–59
