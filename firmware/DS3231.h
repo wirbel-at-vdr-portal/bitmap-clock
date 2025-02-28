@@ -13,7 +13,7 @@ private:
   void SetControl(uint8_t flag, bool On);
 public:
   struct Time {
-     uint8_t Seconds; // 00–59
+     uint8_t Seconds; // 00–61
      uint8_t Minutes; // 00–59
      uint8_t Hours;   // 00–23
      uint8_t Days;    // 1–7
@@ -96,4 +96,10 @@ public:
    * into the DS3231::Time* param tm
    */
   static void ParseDateTime(struct Time* tm, char* datetime);
+
+  /* Calculates a time_t from struct Time.
+   * Only valid for 1.1.1970 - 1.1.2100
+   * This involves a bit of cpu time.
+   */
+  static int64_t Time_t(struct Time* tm);
 };

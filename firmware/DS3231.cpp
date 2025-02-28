@@ -61,6 +61,7 @@ int BCD2Decimal(uint8_t bcd);
 uint8_t DecimalToBCD(int d);
 uint8_t TwoCharsToByte(char* s);
 uint8_t DayOfWeek(uint16_t y, uint8_t m, uint8_t d);
+bool leap(uint16_t y);
 
 
 /*******************************************************************************
@@ -71,19 +72,10 @@ DS3231::DS3231() {
 }
 
 void DS3231::begin() {
-  //Wire.begin();
   ReadRegisters(0, 1+0x12, reg);
 }
 
 void DS3231::ReadRegisters(uint8_t reg, uint8_t count, uint8_t* dest) {
-/*
-  Wire.beginTransmission(I2C_address);
-  Wire.requestFrom(I2C_address, count);
-  Wire.write(reg);
-  for(int i=0; i<count; i++)
-     dest[i] = Wire.read();
-  Wire.endTransmission(true);
-*/
   Wire.beginTransmission(I2C_address);
   Wire.write(reg);
   Wire.endTransmission();
@@ -214,6 +206,23 @@ void DS3231::ParseDateTime(struct Time* tm, char* datetime) {
   tm->Seconds = TwoCharsToByte(datetime);                 // 00–59
 }
 
+int64_t DS3231::Time_t(struct Time* tm) {
+  const uint8_t dim[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  int64_t t =  tm->Seconds +           // 0-61
+              (tm->Minutes * 60L) +    // 0-59
+              (tm->Hours * 3600L);     // 0-23
+
+  uint16_t days = tm->Date - 1; // 1-31
+  for(uint8_t i=1; i<tm->Month; i++) {
+     days += dim[i-1];
+     if (i == 2 and leap(tm->Year)) days++;
+     }
+  for(uint16_t y=1970; y<tm->Year; y++)
+     days += leap(y) ? 366 : 365;
+  t += (days * 86400L);
+  return t;
+}
+
 void DS3231::SetControl(uint8_t flag, bool On) {
   ReadRegisters(0, 1+0x12, reg);
   if (On)
@@ -304,4 +313,8 @@ uint8_t DayOfWeek(uint16_t y, uint8_t m, uint8_t d) {
   dn %= 7;
   if (dn == 0) dn = 7;
   return dn;
+}
+
+bool leap(uint16_t y) {
+  return ((y % 4 == 0 && y % 100 != 0) || y % 400 == 0);
 }

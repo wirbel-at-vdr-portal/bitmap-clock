@@ -18,7 +18,7 @@
  * forward decls
  ******************************************************************************/
 void StartWifi();
-void StopWifi();
+void ReconnectWifi();
 
 
 /***************************************************************
@@ -44,7 +44,6 @@ WiFiUDP udp;
 NTPClient Ntp(udp);
 uint8_t Seconds = 100;
 uint32_t updateCount = 0;
-int WifiRetries = 0;
 int timeZone = +1; // CET or UTC+1
 
 
@@ -68,9 +67,10 @@ void loop(void) {
   if (++updateCount >= 1 * 60) {
      updateCount = 0;
      Serial.println("Getting NTP time..");
+     
+
      if (Ntp.update()) {
-        Serial.println("NTP success.");        
-        WifiRetries = 0;
+        Serial.println("NTP success.");
 
         time_t t = Ntp.getEpochTime();
         t += timeZone * 3600;
@@ -100,8 +100,8 @@ void loop(void) {
             tm.Hours   != hours   or // 00–23
             tm.Date    != days    or // 01–31
             tm.Month   != months  or // 01-12
-            tm.Year    != years) {   // 20xx 
-           Serial.println("correcting local RTC");
+            tm.Year    != years) {   // 20xx
+           time_t t2 = rtc.Time_t(&tm) - t;
            tm.Seconds = seconds;
            tm.Minutes = minutes;
            tm.Hours   = hours;
@@ -109,15 +109,15 @@ void loop(void) {
            tm.Month   = months;
            tm.Year    = years;
            rtc.SetTime(&tm);
+           Serial.print("corrected local RTC by ");
+           Serial.print((int) t2);
+           Serial.println(" seconds.");
            }
         }
-     else if (WiFi.status() != WL_CONNECTED and WifiRetries < 10) {
-        Serial.println("reconnecting WiFi..");
-        WifiRetries++;
-        StopWifi();
-        delay(1000);
-        StartWifi();
-        delay(1000);
+     else if (WiFi.status() != WL_CONNECTED) {
+        Serial.print("reconnecting WiFi.. ");
+        ReconnectWifi();
+        Serial.println(WiFi.status() == WL_CONNECTED? "OK":"nOK");
         }
      }
 
@@ -135,16 +135,14 @@ void loop(void) {
 
 
 void StartWifi() {
-  WiFi.begin(ssid, password);
+  int status = WiFi.begin(ssid, password);
   // wait up to 15 secs for connect.
-  for(int i=0; (WiFi.status() != WL_CONNECTED) and (i<150); i++)
-     delay(100);
-  if (WiFi.status() == WL_CONNECTED)
-     Ntp.begin();
+  for(int i=0; (status != WL_CONNECTED) and (i<3); i++)
+     status = WiFi.begin(ssid, password);
+  Ntp.begin();
 }
 
-void StopWifi() {
+void ReconnectWifi() {
   Ntp.end();
-  WiFi.disconnect();
-} 
-
+  StartWifi();
+}
