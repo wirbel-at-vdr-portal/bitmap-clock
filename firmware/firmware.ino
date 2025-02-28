@@ -64,10 +64,9 @@ void loop(void) {
      }
   Seconds = tm.Seconds;
 
-  if (++updateCount >= 1 * 60) {
+  if (++updateCount >= 15 * 60) {
      updateCount = 0;
      Serial.println("Getting NTP time..");
-     
 
      if (Ntp.update()) {
         Serial.println("NTP success.");
