@@ -1,10 +1,8 @@
 # Bitmap Clock
 The idea of an 6-digit (actually eight: six numbers plus two digits showing a blinking separator) Nixie-like clock, using eight 1.69" 280x240 ST7789 IPS LCDs.
 
-It should display the time as hh:mm:ss (eight displays)
+It displays the time as hh:mm:ss (eight displays) in CET.
 
-Not yet shure if that idea may work at all..
-I'm just collecting pieces yet.
 
 ## List of components
 * Arduino Nano ESP32
@@ -36,10 +34,12 @@ I'm just collecting pieces yet.
 * check multiplexing -> done. Found one missing 1k pullup resistor per digit; fixed for prototype
 * check I2C -> done. Found two missing 4.7k pullup resistors for SDA & SCK; fixed for prototype
 * check SPI speed -> done. No problem at all, the default of 32MHz runs nice. Setting it SPI clk to 80MHz doesn't change anything - to be measured.
+* check RTC accuracy -> nice. Less a second in 24h
 * 20250223: first successful firmware. IPS displays are actually GREAT in terms of display angle.
 * 20250225: RTC works. Showing actual time now on display.
 * 20250226: NTP via wifi works nice. About 22% available memory for a demo sketch; but dealing with WiFi interruptions to be integrated.
 * 20250227: combined in one firmware. RTC is now set per NTP und updated regularly.
+* 20250228: firmware considered stable, reduced NTP update interval to 15 minutes
 
 ![Prototype](doc/Prototype.png)
 
@@ -49,6 +49,6 @@ I'm just collecting pieces yet.
 * no need to use the external REG1117
 
 ## Display update Time:
-* to update all eight digits, we need ~ 0.5sec
+* to update all eight digits, we need ~ 0.3sec
 * i can save time, if updating only digits, which actually changed their value -> done
 
