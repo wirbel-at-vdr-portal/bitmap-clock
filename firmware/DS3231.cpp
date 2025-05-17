@@ -135,7 +135,7 @@ bool DS3231::TimeIsValid(void) {
 
 bool DS3231::Summer(void) {
   ReadRegisters(0, 1+0x12, reg);
-  return (reg[0x0D] & 0x40) == 0;
+  return (reg[0x0D] & 0x40) > 0;
 }
 
 void DS3231::DaylightOffset(bool On) {
