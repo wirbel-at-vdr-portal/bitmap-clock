@@ -82,6 +82,22 @@ public:
    */
   bool TimeIsValid(void);
 
+  /* returns true, if the stored time was set during summer time.
+   *
+   * WARNING WARNING WARNING
+   * This function abuses the 'Alarm 2 DY/nDT' flag and cannot be used, if
+   * RTC Alarm 2 is used.
+   */
+  bool Summer(void);
+
+  /* sets the information, if the stored RTC time was set during summer time.
+   *
+   * WARNING WARNING WARNING
+   * This function abuses the 'Alarm 2 DY/nDT' flag and cannot be used, if
+   * RTC Alarm 2 is used.
+   */
+  void DaylightOffset(bool On);
+
   /* Prints date and time into a char buffer, ie '26.01.2025 10:56:04'
    * buf - pointer to an char[20] (at least)
    */

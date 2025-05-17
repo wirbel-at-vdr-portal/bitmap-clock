@@ -133,6 +133,20 @@ bool DS3231::TimeIsValid(void) {
   return (reg[0x0F] & 0x80) == 0;
 }
 
+bool DS3231::Summer(void) {
+  ReadRegisters(0, 1+0x12, reg);
+  return (reg[0x0D] & 0x40) == 0;
+}
+
+void DS3231::DaylightOffset(bool On) {
+  ReadRegisters(0, 1+0x12, reg);
+  if (On)
+     reg[0x0D] |= 0x40;
+  else
+     reg[0x0D] &= ~0x40;
+  WriteRegister(0x0D, reg[0x0D]);
+}
+
 void DS3231::PrintDateTime(struct Time* tm, char* buf) {
   int y;
   uint8_t p = 0;
