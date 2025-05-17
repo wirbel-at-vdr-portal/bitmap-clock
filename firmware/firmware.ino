@@ -65,6 +65,7 @@ void loop(void) {
   Seconds = tm.Seconds;
 
   if (++updateCount >= 15 * 60) {
+     bool summer;
      updateCount = 0;
      Serial.println("Getting NTP time..");
 
@@ -81,7 +82,8 @@ void loop(void) {
         int minutes;
         int seconds;
 
-        if (IsEuropeSummerTime(years, months, days, hours)) {
+        bool summer = IsEuropeSummerTime(years, months, days, hours);
+        if (summer) {
            // time is moved one hour forward in local time
            t += 3600;
            hours   = hour(t);
@@ -107,16 +109,38 @@ void loop(void) {
            tm.Date    = days;
            tm.Month   = months;
            tm.Year    = years;
+           rtc.DaylightOffset(summer);
            rtc.SetTime(&tm);
            Serial.print("corrected local RTC by ");
            Serial.print((int) t2);
            Serial.println(" seconds.");
            }
         }
-     else if (WiFi.status() != WL_CONNECTED) {
-        Serial.print("reconnecting WiFi.. ");
-        ReconnectWifi();
-        Serial.println(WiFi.status() == WL_CONNECTED? "OK":"nOK");
+     else {
+        summer = IsEuropeSummerTime(tm.Year, tm.Month, tm.Date, tm.Hours);
+        if (summer != rtc.Summer()) {
+           // we don't get NTP updates and run over a daylight time switch
+           time_t Now = rtc.Time_t(&tm);
+           if (summer) // winter -> summer
+              Now += 3600;
+           else // summer -> winter
+              Now -= 3600;
+           tm.Seconds = second(Now);
+           tm.Minutes = minute(Now);
+           tm.Hours   = hour(Now);
+           tm.Days    = weekday(Now);
+           tm.Date    = day(Now);
+           tm.Month   = month(Now);
+           tm.Year    = year(Now);
+           Serial.println("fixing daylight offset w/o NTP time available..");
+           rtc.DaylightOffset(summer);
+           rtc.SetTime(&tm);
+           }
+        if (WiFi.status() != WL_CONNECTED) {
+           Serial.print("reconnecting WiFi.. ");
+           ReconnectWifi();
+           Serial.println(WiFi.status() == WL_CONNECTED? "OK":"nOK");
+           }
         }
      }
 
