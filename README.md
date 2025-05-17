@@ -40,6 +40,7 @@ It displays the time as hh:mm:ss (eight displays) in CET.
 * 20250226: NTP via wifi works nice. About 22% available memory for a demo sketch; but dealing with WiFi interruptions to be integrated.
 * 20250227: combined in one firmware. RTC is now set per NTP und updated regularly.
 * 20250228: firmware considered stable, reduced NTP update interval to 15 minutes
+* 20250517: display frame (front+back) laser cutted && mounted; fixed firmware bug, if no ntp update while daylight saving change
 
 ![Prototype](doc/Prototype.png)
 
