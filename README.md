@@ -15,7 +15,7 @@ It displays the time as hh:mm:ss (eight displays) in CET.
 
 ![Ziffer 9](doc/Ziffer.jpg)
 
-![overview](doc/overview_small.bmp)
+![overview](doc/20250621.png)
 
 # Features
 * Nixie feeling
